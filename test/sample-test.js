@@ -4,12 +4,21 @@ const { expect, assert } = require("chai");
 // the `describe` scope encapsulates an entire test called `TestModifyVariable`
 // the `it` says the behavior that should be expected from the test
 describe("TestModifyVariable", function () {
+  it("should deploy with correct values", async function () {
+    const ModifyVariable = await ethers.getContractFactory("ModifyVariable");
+    const contract = await ModifyVariable.deploy(10, "Hello World");
+    await contract.deployed();
+
+    assert.equal(await contract.x(), 10);
+    assert.equal(await contract.s(), "Hello World");
+  });
+
   it("should change x to 1337", async function () {
     // this line creates an ethers ContractFactory abstraction: https://docs.ethers.org/v5/api/contract/contract-factory/
     const ModifyVariable = await ethers.getContractFactory("ModifyVariable");
 
     // we then use the ContractFactory object to deploy an instance of the contract
-    const contract = await ModifyVariable.deploy(10);
+    const contract = await ModifyVariable.deploy(10, "Hello World");
 
     // wait for contract to be deployed and validated!
     await contract.deployed();
@@ -20,4 +29,17 @@ describe("TestModifyVariable", function () {
     const newX = await contract.x();
     assert.equal(newX.toNumber(), 1337);
   });
+
+  it("should change s", async function () {
+    const ModifyVariable = await ethers.getContractFactory("ModifyVariable");
+
+    const contract = await ModifyVariable.deploy(10, "Hello World");
+    await contract.deployed();
+
+    await contract.modifyToLeet();
+
+    const newS = await contract.s();
+    assert.equal(newS, "l33t");
+  });
 });
+
